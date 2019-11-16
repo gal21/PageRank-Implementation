@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from scipy._lib.six import xrange
 from scipy.sparse import csc_matrix
+import datetime
 
 
 class PageRank:
@@ -19,6 +20,7 @@ class PageRank:
         self.page_rank_matrix = df
 
     def calculate_page_rank(self, beta=0.85, epsilon=0.001, max_iterations=20):
+        print(datetime.datetime.now())
         self.n = self.page_rank_matrix.shape[0]
 
         # transform G into markov matrix A
@@ -41,14 +43,14 @@ class PageRank:
                 # inlinks of state i
                 Ai = np.array(A[:, i].todense())[:, 0]
                 # account for sink states
-                Di = sink / float(self.n)
+                # Di = sink / float(self.n)
                 # account for teleportation to state i
                 Ei = np.ones(self.n) / float(self.n)
 
-                r[i] = ro.dot(Ai * beta + Di * beta + Ei * (1 - beta))
+                # r[i] = ro.dot(Ai * beta + Di * beta + Ei * (1 - beta))
+                r[i] = ro.dot(Ai * beta + Ei * (1 - beta))
                 self.page_rank_results[str(nodes[i])] = r[i]
             num_of_iterations += 1
-
         return r / float(sum(r))
         # self.page_rank_results = sorted(self.page_rank_results.items(), key=operator.itemgetter(1))
 
@@ -64,4 +66,8 @@ class PageRank:
 
 p_r = PageRank()
 p_r.load_graph("Wikipedia_votes.csv")
-print(p_r.calculate_page_rank())
+# p_r.load_graph("example.csv")
+result = p_r.calculate_page_rank()
+print(result)
+print(datetime.datetime.now())
+
